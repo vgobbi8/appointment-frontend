@@ -3,7 +3,7 @@
 import { useForm } from "react-hook-form";
 import { email, z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { api } from "@lib/api";
+import { api } from "../lib/api";
 import { useRouter } from "next/navigation";
 import { ca } from "zod/locales";
 import "sweetalert2";
