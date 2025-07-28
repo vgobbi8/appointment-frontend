@@ -9,6 +9,8 @@ import { ca } from "zod/locales";
 import "sweetalert2";
 import Swal from "sweetalert2";
 import { stringify } from "querystring";
+import { useState } from "react";
+import LoadingOverlay from "./LoadingOverlay";
 
 type Props = { type: "login" | "register" };
 
@@ -27,8 +29,11 @@ export default function AuthForm({ type }: Props) {
     resolver: zodResolver(schema),
   });
 
+  const [loading, setLoading] = useState(false);
+
   const onSubmit = async (data: any) => {
     try {
+      setLoading(true);
       const endpoint = type == "login" ? "/api/login" : "/api/register";
       await api.post(endpoint, data);
       router.push("/dashboard");
@@ -39,41 +44,48 @@ export default function AuthForm({ type }: Props) {
         title: "Ops!",
         text: err.toString(),
       });
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <div>
-        <label className="block text-sm font-medium text-gray-600">Email</label>
-        <input
-          type="email"
-          className=" w-full mt-1 px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-500"
-          {...register("email")}
-        />
-        {errors.email && (
-          <p className="text-sm text-red-600">{errors.email.message}</p>
-        )}
-      </div>
-      <div>
-        <label className=" block text-sm font-medium text-gray-600">
-          Password
-        </label>
-        <input
-          type="password"
-          className=" w-full mt-1 px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-500"
-          {...register("password")}
-        />
-        {errors.password && (
-          <p className="text-sm text-red-600">{errors.password.message}</p>
-        )}
-      </div>
-      <button
-        type="submit"
-        className=" w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition"
-      >
-        {type === "login" ? "Login" : "Register"}
-      </button>
-    </form>
+    <>
+      {loading && <LoadingOverlay show={true} message="Logging In . . ." />}
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-600">
+            Email
+          </label>
+          <input
+            type="email"
+            className=" w-full mt-1 px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-500"
+            {...register("email")}
+          />
+          {errors.email && (
+            <p className="text-sm text-red-600">{errors.email.message}</p>
+          )}
+        </div>
+        <div>
+          <label className=" block text-sm font-medium text-gray-600">
+            Password
+          </label>
+          <input
+            type="password"
+            className=" w-full mt-1 px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring focus:border-blue-500"
+            {...register("password")}
+          />
+          {errors.password && (
+            <p className="text-sm text-red-600">{errors.password.message}</p>
+          )}
+        </div>
+        <button
+          type="submit"
+          className=" w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition"
+        >
+          {type === "login" ? "Login" : "Register"}
+        </button>
+      </form>
+    </>
   );
 }

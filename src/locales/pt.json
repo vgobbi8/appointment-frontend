@@ -1,0 +1,7 @@
+{
+  "Auth.Login": "Entrar",
+  "Auth.Register": "Registrar",
+  "Form.Email": "Email",
+  "Form.Password": "Senha",
+  "Errors.Required": "Campo obrigatório"
+}
